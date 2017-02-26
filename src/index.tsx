@@ -1,5 +1,3 @@
-/// <reference path="../defs/tone.d.ts"/>
-
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {AppContainer} from "react-hot-loader";

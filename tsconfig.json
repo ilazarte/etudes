@@ -12,7 +12,6 @@
     },
     "include": [
         "declarations.d.ts",
-        "defs/tone.d.ts",
         "src/**/*"
     ],
     "exclude": [
