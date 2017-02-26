@@ -1,8 +1,5 @@
-# webpack-typescript-starter
-
-> based on typescriptlang.org guide. 
+Some typescript and tone.js fun 
 
 ```bash
 npm install
-npm start
-```"# webpack-typescript-starter" 
+npm run dev 
