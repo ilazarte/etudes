@@ -38,8 +38,7 @@ export class BasicInstruments {
             "volume": -8,
             "oscillator": {
                 "partials": [1, 2, 1],
-            },
-            "portamento": 0.05
+            }
         }).toMaster();
     }
 

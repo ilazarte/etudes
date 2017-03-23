@@ -1,3 +1,5 @@
+let Tone = require('tone');
+
 import {Note} from "./Note";
 import {Interval} from "./Interval";
 import {Theory} from "./Theory";
@@ -15,19 +17,24 @@ class Chord {
         this.intervals = intervals;
     }
 
-    static basic(note: Note, max: number) : Chord {
-        return new Chord(note, Interval.to(max));
+    toArray() {
+        console.log(this.root, this.intervals);
+
+        let pitch = Pitch[this.root.pitch],
+            octave = this.root.octave,
+            rootfreq = pitch + octave,
+            ints = this.intervals.map(i => i.toSemitone()),
+            harmony = ints.map(i => Tone.Frequency(rootfreq).transpose(i).toNote());
+
+        //harmony = Tone.Frequency(rootfreq).harmonize(ints);
+        console.log("harmony: ", harmony);
+        return harmony;
     }
 
-    /**
-     * Use a shorthand to construct a chord.
-     * @param shorthand
-     */
-    static fromTheory(shorthand : string) {
+    static of(encoding: string) : Chord {
 
-        let chord = new Chord();
         let note : Note = new Note();
-        let split = shorthand.split("/"),
+        let split = encoding.split("/"),
             root = split[0];
 
         let rootinfo = /^([ABCDEFG])(maj|min|dim|dom|aug)?(\d)?$/.exec(root);
@@ -35,14 +42,21 @@ class Chord {
             throw `Invalid format for chord part ${root}`;
         }
 
-        let [p, q, i] = rootinfo,
+        let [_, p, q, i] = rootinfo,
             quality = Theory.toQuality(q),
             interval = i ? Number(i) : 5,
             intervals = Interval.to(interval);
 
         note.pitch = Theory.toPitch(p);
 
-        if (intervals.length === 3) {
+        if (intervals.length === 2) {
+            switch (quality) {
+                case Quality.Major:
+                case Quality.Minor:
+                    intervals[1].quality = quality;
+                    break;
+            }
+        } else if (intervals.length === 3) {
             switch (quality) {
                 case Quality.Major:
                 case Quality.Minor:
@@ -90,6 +104,10 @@ class Chord {
             throw `Intervals ${interval} not yet supported`;
         }
 
+        let chord = new Chord(note, intervals);
+
         return chord;
     }
 }
+
+export {Chord}

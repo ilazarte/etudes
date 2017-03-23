@@ -1,17 +1,12 @@
-// TODO Learn how to encode chords in music theory
-// TODO Work on Caustic simultaneously
-// TODO
-
+/**
+ * Encode some basic concepts of music theory as needed.
+ * Should be the lowest level of all music classes.
+ */
 export module Theory {
 
     export enum Pitch {A, B, C, D, E, F, G}
     export enum StepType {W, h}
-    export enum Quality {Minor, Major, Augmented, Diminished, Dominant}
-    export type Chord = Array<string>;
-
-    export function toChord(encoding: string) : Chord {
-        return [];
-    }
+    export enum Quality {Minor, Major, Augmented, Diminished, Dominant, Perfect}
 
     export function toQuality(enc: string) : Quality {
         if (!enc) {
@@ -53,7 +48,6 @@ export module Theory {
         }
     }
 
-    const Steps = [StepType.W, StepType.h, StepType.W, StepType.W, StepType.h, StepType.W, StepType.W];
     const Major = [StepType.W, StepType.W, StepType.h, StepType.W, StepType.W, StepType.W, StepType.h];
     const Minor = [StepType.W, StepType.h, StepType.W, StepType.W, StepType.W, StepType.h, StepType.W];
 }
