@@ -31,7 +31,7 @@ class Chord {
         return harmony;
     }
 
-    static of(encoding: string) : Chord {
+    static of(encoding: string, octave: number) : Chord {
 
         let note : Note = new Note();
         let split = encoding.split("/"),
@@ -48,6 +48,7 @@ class Chord {
             intervals = Interval.to(interval);
 
         note.pitch = Theory.toPitch(p);
+        note.octave = octave;
 
         if (intervals.length === 2) {
             switch (quality) {
