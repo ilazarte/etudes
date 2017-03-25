@@ -2,23 +2,14 @@ import * as React from "react";
 import {BasicInstruments} from "./audio/BasicInstruments";
 import {Chord} from "./audio/Chord";
 
-let instruments = new BasicInstruments,
-    piano = instruments.piano();
+export default class App extends React.Component<any, any> {
 
-class Sounds {
-    playMiddleC() {
-        piano.triggerAttackRelease("C4", "8n");
-    }
+    piano = BasicInstruments.piano();
 
     playChord(encoding: string, octave: number) {
         let chord = Chord.of(encoding, octave);
-        piano.triggerAttackRelease(chord.toArray(), "8n");
+        this.piano.triggerAttackRelease(chord.toArray(), "8n");
     }
-}
-
-let s = new Sounds();
-
-export default class App extends React.Component<any, any> {
 
     chords(root: string, octave: number) {
         let chords = [
@@ -28,7 +19,7 @@ export default class App extends React.Component<any, any> {
         ];
         let buttons = chords.map((c, i) =>
             <td key={i}>
-                <button onClick={() => s.playChord(root + c, octave)}>
+                <button onClick={() => this.playChord(root + c, octave)}>
                     {root + c}
                 </button>
             </td>

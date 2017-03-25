@@ -5,7 +5,6 @@
 export module Theory {
 
     export enum Pitch {A, B, C, D, E, F, G}
-    export enum StepType {W, h}
     export enum Quality {Minor, Major, Augmented, Diminished, Dominant, Perfect}
 
     export function toQuality(enc: string) : Quality {
@@ -48,6 +47,16 @@ export module Theory {
         }
     }
 
-    const Major = [StepType.W, StepType.W, StepType.h, StepType.W, StepType.W, StepType.W, StepType.h];
-    const Minor = [StepType.W, StepType.h, StepType.W, StepType.W, StepType.W, StepType.h, StepType.W];
+    /* scales listed in semitone distance */
+    const Major = [0, 2, 4, 5, 7, 9, 11, 12];
+    const Minor = [0, 2, 3, 5, 7, 9, 10, 12];
+
+    /* modes ordered by 'brightest' to 'darkest' */
+    const Lydian = [0, 2, 4, 6, 7, 9, 11, 12];
+    const Ionian = [0, 2, 4, 5, 7, 9, 11, 12];
+    const Mixolydian = [0, 2, 4, 6, 7, 9, 10, 12];
+    const Dorian = [0, 2, 3, 5, 7, 9, 10, 12];
+    const Aeolian = [0, 2, 3, 5, 7, 8, 10, 12];
+    const Phrygian = [0, 1, 3, 5, 7, 8, 10, 12];
+    const Locrian = [0, 1, 3, 5, 6, 8, 10, 12];
 }

@@ -6,7 +6,7 @@ let Tone = require('tone');
  */
 export class BasicInstruments {
 
-    kick() {
+    static kick() {
         return new Tone.MembraneSynth({
             "envelope": {
                 "sustain": 0,
@@ -17,7 +17,7 @@ export class BasicInstruments {
         }).toMaster();
     }
 
-    snare() {
+    static snare() {
         return new Tone.NoiseSynth({
             "volume": -5,
             "envelope": {
@@ -33,7 +33,7 @@ export class BasicInstruments {
         }).toMaster();
     }
 
-    piano() {
+    static piano() {
         return new Tone.PolySynth(4, Tone.Synth, {
             "volume": -8,
             "oscillator": {
@@ -42,7 +42,7 @@ export class BasicInstruments {
         }).toMaster();
     }
 
-    base() {
+    static base() {
         return new Tone.MonoSynth({
             "volume" : -10,
             "envelope" : {
