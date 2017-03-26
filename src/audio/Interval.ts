@@ -132,7 +132,7 @@ class Interval {
      * @param steps
      * @returns {Interval[]}
      */
-    static of(... steps: number[]) : Interval[] {
+    static of(steps: number[]) : Interval[] {
         return steps.map(s => new Interval(s));
     }
 }

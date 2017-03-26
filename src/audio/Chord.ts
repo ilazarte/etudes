@@ -1,10 +1,10 @@
 let Tone = require('tone');
 
 import {Note} from "./Note";
+import {Pitch} from "./Pitch";
 import {Interval} from "./Interval";
 import {Theory} from "./Theory";
 
-import Pitch = Theory.Pitch;
 import Quality = Theory.Quality;
 
 class Chord {
@@ -12,6 +12,11 @@ class Chord {
     root: Note;
     intervals: Interval[];
 
+    /**
+     * Create a chord from note and intervals.
+     * @param root
+     * @param intervals
+     */
     constructor(root = new Note(), intervals?: Interval[]) {
         this.root = root;
         this.intervals = intervals;
@@ -31,6 +36,15 @@ class Chord {
         return harmony;
     }
 
+    /**
+     * Return the name of the intervals in this chord as a roman numeral.
+     * @param step
+     */
+    toRomanNumeral(step: number) : string {
+        let ints = [...this.intervals];
+        return "";
+    }
+
     static of(encoding: string, octave: number) : Chord {
 
         let note : Note = new Note();
@@ -47,7 +61,7 @@ class Chord {
             interval = i ? Number(i) : 5,
             intervals = Interval.to(interval);
 
-        note.pitch = Theory.toPitch(p);
+        note.pitch = Pitch.toPitch(p);
         note.octave = octave;
 
         if (intervals.length === 2) {
