@@ -1,11 +1,10 @@
+import {Quality} from "./Quality";
 let Tone = require('tone');
+
 
 import {Note} from "./Note";
 import {Pitch} from "./Pitch";
 import {Interval} from "./Interval";
-import {Theory} from "./Theory";
-
-import Quality = Theory.Quality;
 
 class Chord {
 
@@ -41,8 +40,29 @@ class Chord {
      * @param step
      */
     toRomanNumeral(step: number) : string {
-        let ints = [...this.intervals];
-        return "";
+        let ints = [...this.intervals],
+            base = ints[0],
+            nints = ints.map(i => i.step - base.step);
+
+        if (step === 1) {
+            return "I";
+        } else if (step === 2) {
+            return "II";
+        } else if (step === 3) {
+            return "III";
+        } else if (step === 4) {
+            return "IV";
+        } else if (step === 5) {
+            return "V";
+        } else if (step === 6) {
+            return "VI";
+        } else if (step === 7) {
+            return "VII";
+        } else if (step === 8) {
+            return "VIII";
+        }
+
+        throw `Invalid step ${step}`;
     }
 
     static of(encoding: string, octave: number) : Chord {
@@ -57,7 +77,7 @@ class Chord {
         }
 
         let [_, p, q, i] = rootinfo,
-            quality = Theory.toQuality(q),
+            quality = Quality.toQuality(q),
             interval = i ? Number(i) : 5,
             intervals = Interval.to(interval);
 

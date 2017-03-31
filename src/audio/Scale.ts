@@ -1,6 +1,6 @@
 export class Scale {
     name: string;
-    intervals: number[];
+    semitones: number[];
 
     /* scales listed in semitone distance */
     static Major = new Scale("Major", [0, 2, 4, 5, 7, 9, 11, 12]);
@@ -15,9 +15,9 @@ export class Scale {
     static Phrygian = new Scale("Phrygian", [0, 1, 3, 5, 7, 8, 10, 12]);
     static Locrian = new Scale("Locrian", [0, 1, 3, 5, 6, 8, 10, 12]);
 
-    constructor(name: string, intervals: number[]) {
+    constructor(name: string, semitones: number[]) {
         this.name = name;
-        this.intervals = intervals;
+        this.semitones = semitones;
     }
 }
 

@@ -1,6 +1,4 @@
-import {Theory} from "./Theory";
-
-import Pitch = Theory.Pitch;
+import {Pitch} from "./Pitch";
 
 class Note {
     pitch: Pitch;

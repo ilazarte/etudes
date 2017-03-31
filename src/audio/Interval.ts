@@ -1,6 +1,4 @@
-import {Theory} from "./Theory";
-import Quality = Theory.Quality;
-
+import {Quality} from "./Quality";
 
 const INTERVAL_SEMITONE_LUT = [
     {step: 1, quality: Quality.Perfect, semitone: 0},
@@ -36,7 +34,25 @@ const INTERVAL_SEMITONE_LUT = [
 
     {step: 8, quality: Quality.Diminished, semitone: 11},
     {step: 8, quality: Quality.Perfect, semitone: 12},
-    {step: 8, quality: Quality.Augmented, semitone: 13}
+    {step: 8, quality: Quality.Augmented, semitone: 13},
+
+    {step: 9, quality: Quality.Diminished, semitone: 12},
+    {step: 9, quality: Quality.Minor, semitone: 13},
+    {step: 9, quality: Quality.Major, semitone: 14},
+    {step: 9, quality: Quality.Augmented, semitone: 15},
+
+    {step: 10, quality: Quality.Diminished, semitone: 14},
+    {step: 10, quality: Quality.Minor, semitone: 15},
+    {step: 10, quality: Quality.Major, semitone: 16},
+    {step: 10, quality: Quality.Augmented, semitone: 17},
+
+    {step: 11, quality: Quality.Diminished, semitone: 16},
+    {step: 11, quality: Quality.Perfect, semitone: 17},
+    {step: 11, quality: Quality.Augmented, semitone: 18},
+
+    {step: 12, quality: Quality.Diminished, semitone: 18},
+    {step: 12, quality: Quality.Perfect, semitone: 19},
+    {step: 12, quality: Quality.Augmented, semitone: 20},
 ];
 
 class Interval {
@@ -46,31 +62,30 @@ class Interval {
     private _quality: Quality;
 
     constructor(step: number, quality?: Quality) {
-        this._step = step;
-        this._quality = quality;
-
         if (step < 0) {
             throw "Invalid step, less than 1.";
         }
         this.step = step % 8;
         this.stepmult = Math.floor(step / 8);
         if (!quality) {
-            if (step === 1) {
+            if (this.step === 1) {
                 quality = Quality.Perfect;
-            } else if (step === 2) {
+            } else if (this.step === 2) {
                 quality = Quality.Major;
-            } else if (step === 3) {
+            } else if (this.step === 3) {
                 quality = Quality.Major;
-            } else if (step === 4) {
+            } else if (this.step === 4) {
                 quality = Quality.Perfect;
-            } else if (step === 5) {
+            } else if (this.step === 5) {
                 quality = Quality.Perfect;
-            } else if (step === 6) {
+            } else if (this.step === 6) {
                 quality = Quality.Major;
-            } else if (step === 7) {
+            } else if (this.step === 7) {
                 quality = Quality.Major;
-            } else if (step === 8) {
+            } else if (this.step === 8) {
                 quality = Quality.Perfect;
+            } else {
+                throw `Invalid step ${step}`;
             }
         }
         this.quality = quality;
@@ -92,11 +107,11 @@ class Interval {
         this._stepmult = value;
     }
 
-    get quality(): Theory.Quality {
+    get quality(): Quality {
         return this._quality;
     }
 
-    set quality(value: Theory.Quality) {
+    set quality(value: Quality) {
         this._quality = value;
     }
 
@@ -108,7 +123,7 @@ class Interval {
                 return interval.semitone;
             }
         }
-        throw `Invalid step '${this.step}' and quality '${this.quality}' combination.`
+        throw `Invalid step '${this.step}' and quality '${Quality[this.quality]}' combination.`
     }
 
     /**
@@ -117,6 +132,7 @@ class Interval {
      * @returns {Interval[]}
      */
     static to(max: number) : Interval[] {
+
         let intervals: Interval[] = [];
         for (let i = 0; i <= max; i++) {
             if (i % 2 == 0) {
@@ -134,6 +150,36 @@ class Interval {
      */
     static of(steps: number[]) : Interval[] {
         return steps.map(s => new Interval(s));
+    }
+
+
+    /**
+     * Construct an interval array from an array of semitones related to each other.
+     * Zeroes out the first step.
+     *
+     * @param semitones
+     * @returns {Interval[]}
+     */
+    static fromSemitones(semitones: number[], steps: number[]) : Interval[] {
+
+        let intervals: Interval[] = [];
+
+        for (let i = 0; i < semitones.length; i++) {
+            let step = steps[i],
+                semitone = semitones[i];
+
+            let lus = INTERVAL_SEMITONE_LUT
+                .filter(item => step === item.step && item.semitone === semitone);
+
+            if (!lus || lus.length === 0) {
+                throw `No valid look up found for step: ${step} and semitone: ${semitone}`;
+            }
+
+            let lookup = lus[0];
+            intervals.push(new Interval(step, lookup.quality));
+        }
+
+        return intervals;
     }
 }
 

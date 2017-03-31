@@ -34,7 +34,7 @@ export class BasicInstruments {
     }
 
     static piano() {
-        return new Tone.PolySynth(4, Tone.Synth, {
+        return new Tone.PolySynth(8, Tone.Synth, {
             "volume": -8,
             "oscillator": {
                 "partials": [1, 2, 1],

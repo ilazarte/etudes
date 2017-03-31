@@ -1,10 +1,14 @@
-enum Pitch {A, B, C, D, E, F, G}
+export enum Pitch {A, B, C, D, E, F, G}
 
-module Pitch {
+export module Pitch {
     export function toPitch(enc: string): Pitch {
         if (!enc) {
             return Pitch.C;
-        } else if (enc === "A") {
+        }
+
+        enc = enc.toUpperCase();
+
+        if (enc === "A") {
             return Pitch.A;
         } else if (enc === "B") {
             return Pitch.B;
@@ -23,5 +27,3 @@ module Pitch {
         }
     }
 }
-
-export {Pitch};
