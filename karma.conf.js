@@ -39,7 +39,7 @@ module.exports = function(config) {
          * http://karma-runner.github.io/0.13/config/files.html
          */
         files: [
-            "test/**/*.ts"
+            "test/**/*.spec.ts"
         ],
 
         /*
@@ -58,7 +58,12 @@ module.exports = function(config) {
          * to load via the plugins configuration setting.
          */
         plugins: [
-            "karma-*"
+            "karma-mocha",
+            "karma-chai",
+            "karma-sinon",
+            "karma-webpack",
+            "karma-mocha-reporter",
+            "karma-phantomjs-launcher"
         ],
 
         // The port where the Karma web server will be listening.
@@ -69,7 +74,7 @@ module.exports = function(config) {
          * npm module to be npm installed and added to the "plugins" field.
          */
         preprocessors: {
-            "test/**/*.ts": ["webpack"] // Using karma-webpack npm module
+            "test/**/*.spec.ts": ["webpack"] // Using karma-webpack npm module
         },
 
         /*

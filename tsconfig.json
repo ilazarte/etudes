@@ -12,10 +12,10 @@
     },
     "include": [
         "declarations.d.ts",
-        "src/**/*"
+        "src/**/*",
+        "test/**/*"
     ],
     "exclude": [
-        "node_modules",
-        "**/*.spec.ts"
+        "node_modules"
     ]
 }

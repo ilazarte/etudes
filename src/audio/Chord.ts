@@ -24,9 +24,9 @@ class Chord {
     toArray() {
         console.log(this.root, this.intervals);
 
-        let pitch = Pitch[this.root.pitch],
+        let pitch = this.root.pitch,
             octave = this.root.octave,
-            rootfreq = pitch + octave,
+            rootfreq = pitch.toString() + octave,
             ints = this.intervals.map(i => i.toSemitone()),
             harmony = ints.map(i => Tone.Frequency(rootfreq).transpose(i).toNote());
 
@@ -81,7 +81,7 @@ class Chord {
             interval = i ? Number(i) : 5,
             intervals = Interval.to(interval);
 
-        note.pitch = Pitch.toPitch(p);
+        note.pitch = Pitch.valueOf(p);
         note.octave = octave;
 
         if (intervals.length === 2) {

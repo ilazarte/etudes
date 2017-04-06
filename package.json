@@ -30,6 +30,7 @@
     "source-map-loader": "^0.2.1",
     "ts-node": "^3.0.2",
     "typescript": "2.1.1",
+    "web-audio-test-api": "^0.5.2",
     "webpack": "^2.3.2",
     "webpack-dev-server": "^2.4.2"
   },
