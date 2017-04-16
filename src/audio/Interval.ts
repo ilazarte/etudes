@@ -1,5 +1,9 @@
 import {Quality} from "./Quality";
 
+/**
+ * Look up table generated from table at bottom of:
+ * http://www.musictheory.net/lessons/31
+ */
 const INTERVAL_SEMITONE_LUT = [
     {step: 1, quality: Quality.Perfect, semitone: 0},
     {step: 1, quality: Quality.Augmented, semitone: 1},

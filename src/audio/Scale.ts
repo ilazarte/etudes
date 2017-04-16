@@ -1,4 +1,9 @@
+import {Chord} from "./Chord";
+import {Note} from "./Note";
+import {Interval} from "./Interval";
+
 export class Scale {
+
     name: string;
     semitones: number[];
 
@@ -18,6 +23,45 @@ export class Scale {
     constructor(name: string, semitones: number[]) {
         this.name = name;
         this.semitones = semitones;
+    }
+
+    /**
+     * Convert the scale into its set of diatonics.
+     * @param rootNote
+     * @returns {Array}
+     */
+    diatonics(rootNote: Note) : Chord[] {
+
+        let sx = [...this.semitones],
+            semitones: number[] = [],
+            steps = [1, 3, 5],
+            chord: Chord,
+            chords = [],
+            currentNote = rootNote.copy();
+
+        /* double the available semitones for extra chord sizes */
+        for (let i = 1; i < 8; i++) {
+            sx.push(sx[i] + 12);
+        }
+
+        console.log("extended semitone list: ", sx);
+
+        for (let i = 0; i < this.semitones.length; i++) {
+
+            semitones.length = 0;
+            semitones.push(sx[i]);
+            semitones.push(sx[i + 2]);
+            semitones.push(sx[i + 4]);
+
+            console.log("\tgenerating diatonics from: i, semitones, steps: ", i, semitones, steps);
+            chord = new Chord(rootNote, Interval.fromSemitones(semitones, steps));
+            // console.log("new chord: ", chord);
+            chords.push(chord);
+            steps = steps.map(s => s + 1);
+            // console.log("steps now:", steps);
+        }
+
+        return chords;
     }
 }
 

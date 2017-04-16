@@ -1,8 +1,34 @@
-export enum Accidental {Flat, Sharp, Natural}
+export class Accidental {
 
-export module Accidental {
+    private value: string;
 
-    export function toAccidental(enc: string): Accidental {
+    private constructor(value: string) {
+        this.value = value;
+    }
+
+    toString() {
+        return this.value;
+    }
+
+    toEncoding() {
+        if (this.value === "Flat") {
+            return "b";
+        } else if (this.value === "Sharp") {
+            return "#";
+        } else {
+            return "";
+        }
+    }
+
+    static Flat = new Accidental("Flat");
+    static Natural = new Accidental("Natural");
+    static Sharp = new Accidental("Sharp");
+
+    static values() {
+        return [Accidental.Flat, Accidental.Natural, Accidental.Sharp];
+    }
+
+    static valueOf(enc: string) {
         if (!enc) {
             return Accidental.Natural;
         }
@@ -10,15 +36,18 @@ export module Accidental {
         let match = /[#b]/.exec(enc);
 
         if (!match) {
-            Accidental.Natural;
+            return Accidental.Natural;
         }
 
-        if (match[1] === "#") {
+        let char = match[0];
+
+        if (char === "#") {
             return Accidental.Sharp;
-        } else if (match[1] === "b") {
+        } else if (char === "b") {
             return Accidental.Flat;
         } else {
-            throw `Invalid accidental: ${match[1]}`;
+            console.error(`Invalid match: ` + match);
+            throw `Invalid accidental: ${char}`;
         }
     }
 }

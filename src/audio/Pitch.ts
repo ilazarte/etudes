@@ -35,6 +35,9 @@ export class Pitch {
     }
 
     static valueOf(value: string) : Pitch {
+        if (value.length > 1) {
+            value = value[0];
+        }
         return Pitch.values().filter(p => p.value === value)[0];
     }
 }

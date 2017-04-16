@@ -1,7 +1,4 @@
 import {Quality} from "./Quality";
-let Tone = require('tone');
-
-
 import {Note} from "./Note";
 import {Pitch} from "./Pitch";
 import {Interval} from "./Interval";
@@ -22,16 +19,11 @@ class Chord {
     }
 
     toArray() {
-        console.log(this.root, this.intervals);
+        // console.log(this.root, this.intervals);
+        let ints = this.intervals.map(i => i.toSemitone()),
+            harmony = ints.map(i => this.root.transpose(i).toEncoding());
 
-        let pitch = this.root.pitch,
-            octave = this.root.octave,
-            rootfreq = pitch.toString() + octave,
-            ints = this.intervals.map(i => i.toSemitone()),
-            harmony = ints.map(i => Tone.Frequency(rootfreq).transpose(i).toNote());
-
-        //harmony = Tone.Frequency(rootfreq).harmonize(ints);
-        console.log("harmony: ", harmony);
+        // console.log("harmony: ", harmony);
         return harmony;
     }
 
@@ -65,6 +57,12 @@ class Chord {
         throw `Invalid step ${step}`;
     }
 
+    /**
+     * Rules gleaned from https://en.wikipedia.org/wiki/Chord_names_and_symbols_(popular_music)#Examples
+     * @param encoding
+     * @param octave
+     * @returns {Chord}
+     */
     static of(encoding: string, octave: number) : Chord {
 
         let note : Note = new Note();

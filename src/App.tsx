@@ -4,14 +4,15 @@ import {Chord} from "./audio/Chord";
 import {Scale} from "./audio/Scale";
 import {Note} from "./audio/Note";
 import {Pitch} from "./audio/Pitch";
-import {Interval} from "./audio/Interval";
 
 export default class App extends React.Component<any, any> {
 
     piano = BasicInstruments.piano();
 
     playChord(chord: Chord, octave: number) {
-        this.piano.triggerAttackRelease(chord.toArray(), "8n");
+        let arr = chord.toArray();
+        console.log("SEND >>> " + arr);
+        this.piano.triggerAttackRelease(arr, "8n");
     }
 
     playEncoding(encoding: string, octave: number) {
@@ -38,41 +39,18 @@ export default class App extends React.Component<any, any> {
 
     diatonicChords(scale: Scale, pitch = Pitch.C, octave = 4) {
 
-        let triads = [...scale.semitones],
-            semitones: number[] = [],
-            steps = [1, 3, 5],
-            chord: Chord,
-            note: Note = new Note(pitch, octave),
-            buttons:any[] = [];
-
-        triads.push(triads[1] + 12);
-        triads.push(triads[2] + 12);
-        triads.push(triads[3] + 12);
-        triads.push(triads[4] + 12);
-        triads.push(triads[5] + 12);
+        let buttons: any[] = [],
+            chords = scale.diatonics(new Note(pitch, octave));
 
         buttons.push(<td>{scale.name}</td>);
 
-        console.log("triads: ", scale.semitones);
-
-        for (let i = 0; i < scale.semitones.length; i++) {
-            //semitones = scale.semitones.slice(i, i + 3);
-            semitones.length = 0;
-            semitones.push(triads[i]);
-            semitones.push(triads[i + 2]);
-            semitones.push(triads[i + 4]);
-            console.log("generating diatonics from: i, semitones, steps: ", i, semitones, steps);
-            chord = new Chord(note, Interval.fromSemitones(semitones, steps));
-            console.log("new chord: ", chord);
-            buttons.push(
-                <td key={i}>
-                    <button onClick={() => this.playChord(chord, octave)}>
-                        {chord.toRomanNumeral(i + 1)}
-                    </button>
-                </td>)
-            steps = steps.map(s => s + 1);
-            console.log("steps now:", steps);
-        }
+        chords.forEach((chord, idx) => {
+            buttons.push(<td key={idx}>
+                <button onClick={() => this.playChord(chord, octave)}>
+                    {chord.toRomanNumeral(idx + 1)}
+                </button>
+            </td>)
+        });
 
         return buttons;
     }
