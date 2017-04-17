@@ -9,7 +9,7 @@ export default class App extends React.Component<any, any> {
 
     piano = BasicInstruments.piano();
 
-    playChord(chord: Chord, octave: number) {
+    playChord(chord: Chord) {
         let arr = chord.toArray();
         console.log("SEND >>> " + arr);
         this.piano.triggerAttackRelease(arr, "8n");
@@ -17,7 +17,7 @@ export default class App extends React.Component<any, any> {
 
     playEncoding(encoding: string, octave: number) {
         let chord = Chord.of(encoding, octave);
-        this.playChord(chord, octave);
+        this.playChord(chord);
     }
 
     chords(root: string, octave: number) {
@@ -37,16 +37,16 @@ export default class App extends React.Component<any, any> {
         return buttons;
     }
 
-    diatonicChords(scale: Scale, pitch = Pitch.C, octave = 4) {
+    diatonicChords(scale: Scale, note = new Note()) {
 
         let buttons: any[] = [],
-            chords = scale.diatonics(new Note(pitch, octave));
+            chords: Chord[] = scale.diatonics(note, 5);
 
-        buttons.push(<td>{scale.name}</td>);
+        buttons.push(<td key={"scale-" + scale.name}>{scale.name}</td>);
 
         chords.forEach((chord, idx) => {
             buttons.push(<td key={idx}>
-                <button onClick={() => this.playChord(chord, octave)}>
+                <button onClick={() => this.playChord(chord)}>
                     {chord.toRomanNumeral(idx + 1)}
                 </button>
             </td>)

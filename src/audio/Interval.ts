@@ -4,6 +4,7 @@ import {Quality} from "./Quality";
  * Look up table generated from table at bottom of:
  * http://www.musictheory.net/lessons/31
  */
+
 const INTERVAL_SEMITONE_LUT = [
     {step: 1, quality: Quality.Perfect, semitone: 0},
     {step: 1, quality: Quality.Augmented, semitone: 1},
@@ -61,129 +62,15 @@ const INTERVAL_SEMITONE_LUT = [
 
 class Interval {
 
-    private _step: number;
-    private _stepmult: number;
-    private _quality: Quality;
-
-    constructor(step: number, quality?: Quality) {
-        if (step < 0) {
-            throw "Invalid step, less than 1.";
-        }
-        this.step = step % 8;
-        this.stepmult = Math.floor(step / 8);
-        if (!quality) {
-            if (this.step === 1) {
-                quality = Quality.Perfect;
-            } else if (this.step === 2) {
-                quality = Quality.Major;
-            } else if (this.step === 3) {
-                quality = Quality.Major;
-            } else if (this.step === 4) {
-                quality = Quality.Perfect;
-            } else if (this.step === 5) {
-                quality = Quality.Perfect;
-            } else if (this.step === 6) {
-                quality = Quality.Major;
-            } else if (this.step === 7) {
-                quality = Quality.Major;
-            } else if (this.step === 8) {
-                quality = Quality.Perfect;
-            } else {
-                throw `Invalid step ${step}`;
-            }
-        }
-        this.quality = quality;
-    }
-
-    get step(): number {
-        return this._step;
-    }
-
-    set step(value: number) {
-        this._step = value;
-    }
-
-    get stepmult(): number {
-        return this._stepmult;
-    }
-
-    set stepmult(value: number) {
-        this._stepmult = value;
-    }
-
-    get quality(): Quality {
-        return this._quality;
-    }
-
-    set quality(value: Quality) {
-        this._quality = value;
-    }
-
-    toSemitone() {
+    static toSemitone(step: number, quality: Quality) {
         for (let i = 0; i < INTERVAL_SEMITONE_LUT.length; i++) {
             let interval = INTERVAL_SEMITONE_LUT[i];
-            if (interval.step === this.step &&
-                interval.quality === this.quality) {
+            if (interval.step === step &&
+                interval.quality === quality) {
                 return interval.semitone;
             }
         }
-        throw `Invalid step '${this.step}' and quality '${Quality[this.quality]}' combination.`
-    }
-
-    /**
-     * Create a traditional chord including all typical intervals through max.
-     * @param max
-     * @returns {Interval[]}
-     */
-    static to(max: number) : Interval[] {
-
-        let intervals: Interval[] = [];
-        for (let i = 0; i <= max; i++) {
-            if (i % 2 == 0) {
-                continue;
-            }
-            intervals.push(new Interval(i));
-        }
-        return intervals;
-    }
-
-    /**
-     * Create intervals for all passed in steps.
-     * @param steps
-     * @returns {Interval[]}
-     */
-    static of(steps: number[]) : Interval[] {
-        return steps.map(s => new Interval(s));
-    }
-
-
-    /**
-     * Construct an interval array from an array of semitones related to each other.
-     * Zeroes out the first step.
-     *
-     * @param semitones
-     * @returns {Interval[]}
-     */
-    static fromSemitones(semitones: number[], steps: number[]) : Interval[] {
-
-        let intervals: Interval[] = [];
-
-        for (let i = 0; i < semitones.length; i++) {
-            let step = steps[i],
-                semitone = semitones[i];
-
-            let lus = INTERVAL_SEMITONE_LUT
-                .filter(item => step === item.step && item.semitone === semitone);
-
-            if (!lus || lus.length === 0) {
-                throw `No valid look up found for step: ${step} and semitone: ${semitone}`;
-            }
-
-            let lookup = lus[0];
-            intervals.push(new Interval(step, lookup.quality));
-        }
-
-        return intervals;
+        throw `Invalid step '${step}' and quality '${quality.toString()}' combination.`
     }
 }
 

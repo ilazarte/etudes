@@ -1,6 +1,5 @@
 import {Chord} from "./Chord";
 import {Note} from "./Note";
-import {Interval} from "./Interval";
 
 export class Scale {
 
@@ -28,14 +27,13 @@ export class Scale {
     /**
      * Convert the scale into its set of diatonics.
      * @param rootNote
-     * @returns {Array}
+     * @param maxInterval
+     * @returns {Chord[]}
      */
-    diatonics(rootNote: Note) : Chord[] {
+    diatonics(rootNote: Note, maxInterval: number) : Chord[] {
 
         let sx = [...this.semitones],
-            semitones: number[] = [],
-            steps = [1, 3, 5],
-            chord: Chord,
+            semitoneIdxs = maxInterval === 7 ? [2, 4, 6] : [2, 4],
             chords = [],
             currentNote = rootNote.copy();
 
@@ -48,17 +46,22 @@ export class Scale {
 
         for (let i = 0; i < this.semitones.length; i++) {
 
-            semitones.length = 0;
-            semitones.push(sx[i]);
-            semitones.push(sx[i + 2]);
-            semitones.push(sx[i + 4]);
+            let notes = [];
+            notes.push(currentNote);
 
-            console.log("\tgenerating diatonics from: i, semitones, steps: ", i, semitones, steps);
-            chord = new Chord(rootNote, Interval.fromSemitones(semitones, steps));
-            // console.log("new chord: ", chord);
-            chords.push(chord);
-            steps = steps.map(s => s + 1);
-            // console.log("steps now:", steps);
+            for (let j = 0; j < semitoneIdxs.length; j++) {
+                let semitoneIdx = semitoneIdxs[j],
+                    semitone = sx[semitoneIdx];
+                notes.push(currentNote.transpose(semitone));
+            }
+
+            chords.push(new Chord(notes));
+
+            /* transpose to the next note, and shift all indexes down transpose amount */
+            let shift = sx[1];
+            currentNote = currentNote.transpose(shift);
+            sx.shift();
+            sx = sx.map(s => s - shift);
         }
 
         return chords;

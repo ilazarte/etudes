@@ -5,26 +5,32 @@ import {Interval} from "./Interval";
 
 class Chord {
 
-    root: Note;
-    intervals: Interval[];
+    notes: Note[];
 
     /**
-     * Create a chord from note and intervals.
-     * @param root
-     * @param intervals
+     * Create a notes from various options
+     * @param notes
      */
-    constructor(root = new Note(), intervals?: Interval[]) {
-        this.root = root;
-        this.intervals = intervals;
+    constructor(notes: Note[] | Note) {
+        if (notes instanceof Note) {
+            this.notes = [];
+            this.notes.push(<Note> notes);
+        } else {
+            this.notes = notes;
+        }
     }
 
     toArray() {
         // console.log(this.root, this.intervals);
-        let ints = this.intervals.map(i => i.toSemitone()),
-            harmony = ints.map(i => this.root.transpose(i).toEncoding());
+        let harmony = this.notes.map(i => i.toEncoding());
 
         // console.log("harmony: ", harmony);
         return harmony;
+    }
+
+    addInterval(step: number, quality: Quality) {
+        let root = this.notes[0];
+        this.notes.push(root.transpose(Interval.toSemitone(step, quality)));
     }
 
     /**
@@ -32,9 +38,8 @@ class Chord {
      * @param step
      */
     toRomanNumeral(step: number) : string {
-        let ints = [...this.intervals],
-            base = ints[0],
-            nints = ints.map(i => i.step - base.step);
+
+        // TODO use Interval to figure out the correct roman numeral
 
         if (step === 1) {
             return "I";
@@ -65,8 +70,8 @@ class Chord {
      */
     static of(encoding: string, octave: number) : Chord {
 
-        let note : Note = new Note();
-        let split = encoding.split("/"),
+        let rootNote : Note = new Note(),
+            split = encoding.split("/"),
             root = split[0];
 
         let rootinfo = /^([ABCDEFG])(maj|min|dim|dom|aug)?(\d)?$/.exec(root);
@@ -75,69 +80,68 @@ class Chord {
         }
 
         let [_, p, q, i] = rootinfo,
-            quality = Quality.toQuality(q),
-            interval = i ? Number(i) : 5,
-            intervals = Interval.to(interval);
+            quality = Quality.valueOf(q),
+            maxInterval = i ? Number(i) : 5;
 
-        note.pitch = Pitch.valueOf(p);
-        note.octave = octave;
+        rootNote.pitch = Pitch.valueOf(p);
+        rootNote.octave = octave;
 
-        if (intervals.length === 2) {
+        let chord = new Chord(rootNote);
+
+        if (maxInterval === 3) {
             switch (quality) {
                 case Quality.Major:
                 case Quality.Minor:
-                    intervals[1].quality = quality;
+                    chord.addInterval(3, quality);
                     break;
             }
-        } else if (intervals.length === 3) {
+        } else if (maxInterval === 5) {
             switch (quality) {
                 case Quality.Major:
                 case Quality.Minor:
-                    intervals[1].quality = quality;
+                    chord.addInterval(3, quality);
+                    chord.addInterval(5, Quality.Perfect);
+                    break;
+                case Quality.Augmented:
+                    chord.addInterval(3, Quality.Major);
+                    chord.addInterval(5, Quality.Augmented);
                     break;
                 case Quality.Diminished:
-                case Quality.Augmented:
-                    intervals[2].quality = quality;
+                    chord.addInterval(3, Quality.Minor);
+                    chord.addInterval(5, Quality.Diminished);
                     break;
             }
-        } else if (intervals.length === 4) {
-            if (interval === 6) {
-                switch (quality) {
-                    case Quality.Major:
-                    case Quality.Minor:
-                        intervals[1].quality = quality;
-                        break;
-                }
-            } else if (interval === 7) {
-                switch (quality) {
-                    case Quality.Major:
-                        intervals[1].quality = quality;
-                        break;
-                    case Quality.Minor:
-                        intervals[1].quality = quality;
-                        intervals[3].quality = quality;
-                        break;
-                    case Quality.Dominant:
-                        intervals[3].quality = Quality.Minor;
-                        break;
-                    case Quality.Augmented:
-                        intervals[2].quality = quality;
-                        intervals[3].quality = Quality.Minor;
-                        break;
-                    case Quality.Diminished:
-                        intervals[1].quality = Quality.Minor;
-                        intervals[2].quality = quality;
-                        intervals[3].quality = quality;
-
-                }
-            } else {
-                throw `Intervals ${interval} not yet supported`;
+        } else if (maxInterval === 7) {
+            switch (quality) {
+                case Quality.Major:
+                    chord.addInterval(3, Quality.Major);
+                    chord.addInterval(5, Quality.Perfect);
+                    chord.addInterval(7, Quality.Major);
+                    break;
+                case Quality.Minor:
+                    chord.addInterval(3, Quality.Minor);
+                    chord.addInterval(5, Quality.Perfect);
+                    chord.addInterval(7, Quality.Minor);
+                    break;
+                case Quality.Dominant:
+                    chord.addInterval(3, Quality.Major);
+                    chord.addInterval(5, Quality.Perfect);
+                    chord.addInterval(7, Quality.Minor);
+                    break;
+                case Quality.Augmented:
+                    chord.addInterval(3, Quality.Major);
+                    chord.addInterval(5, Quality.Augmented);
+                    chord.addInterval(7, Quality.Minor);
+                    break;
+                case Quality.Diminished:
+                    chord.addInterval(3, Quality.Minor);
+                    chord.addInterval(5, Quality.Diminished);
+                    chord.addInterval(7, Quality.Diminished);
+                    break;
             }
         } else {
-            throw `Intervals ${interval} not yet supported`;
+            throw `Intervals ${maxInterval} not yet supported`;
         }
-
-        let chord = new Chord(note, intervals);
 
         return chord;
     }
