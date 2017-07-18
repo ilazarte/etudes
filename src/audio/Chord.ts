@@ -28,9 +28,61 @@ class Chord {
         return harmony;
     }
 
+    /**
+     * Add an interval.
+     * @param step
+     * @param quality
+     */
     addInterval(step: number, quality: Quality) {
         let root = this.notes[0];
-        this.notes.push(root.transpose(Interval.toSemitone(step, quality)));
+        let semitones = Interval.toSemitone(step, quality);
+        this.notes.push(root.transpose(semitones));
+    }
+
+    /**
+     * Provide a quality for this chord.
+     * Currently only considers first two intervals.
+     * TODO Quality should include flat 3s vs natural 3s.
+     *
+     * @returns {Quality}
+     */
+    toQuality() : Quality {
+
+        let qualities = [],
+            notes = [...this.notes];
+
+        /*console.log("generating quality: " + notes.map(n => n.toEncoding()));*/
+
+        while (notes.length > 1) {
+            let first = notes.shift(),
+                second = notes[0],
+                semitone = first.semitone(second),
+                interval = first.pitch.interval(second.pitch);
+
+            /*console.log("\tfirst: ", first.toEncoding());
+            console.log("\tsecond: ", second.toEncoding());
+            console.log("\tsemitone: ", semitone);
+            console.log("\tinterval: ", interval);*/
+
+            let quality = Interval.toQuality(interval, semitone);
+            qualities.push(quality);
+        }
+
+        if (qualities.length === 2) {
+            let [first, second] = qualities;
+            if (Quality.Major === first && Quality.Minor === second) {
+                return Quality.Major;
+            } else if (Quality.Minor === first && Quality.Major === second) {
+                return Quality.Minor;
+            } else if (Quality.Major === first && Quality.Major === second) {
+                return Quality.Augmented;
+            } else if (Quality.Minor === first && Quality.Minor === second) {
+                return Quality.Diminished;
+            }
+        }
+
+        /*console.error("Invalid quality list: ", qualities);*/
+        throw `Unsupported chord for quality inspection ${this}`;
     }
 
     /**
@@ -40,23 +92,35 @@ class Chord {
     toRomanNumeral(step: number) : string {
 
         // TODO use Interval to figure out the correct roman numeral
+        const name = (ch: string, quality: Quality) => {
+            if (Quality.Major === quality) {
+                return ch;
+            } else if (Quality.Minor === quality) {
+                return ch.toLowerCase();
+            } else if (Quality.Augmented === quality) {
+                return ch + "+";
+            } else if (Quality.Diminished === quality) {
+                return ch.toLowerCase() + "o";
+            }
+            throw `Unsupported quality: ${quality.toString()}`;
+        };
 
         if (step === 1) {
-            return "I";
+            return name("I", this.toQuality());
         } else if (step === 2) {
-            return "II";
+            return name("II", this.toQuality());
         } else if (step === 3) {
-            return "III";
+            return name("III", this.toQuality());
         } else if (step === 4) {
-            return "IV";
+            return name("IV", this.toQuality());
         } else if (step === 5) {
-            return "V";
+            return name("V", this.toQuality());
         } else if (step === 6) {
-            return "VI";
+            return name("VI", this.toQuality());
         } else if (step === 7) {
-            return "VII";
+            return name("VII", this.toQuality());
         } else if (step === 8) {
-            return "VIII";
+            return name("VIII", this.toQuality());
         }
 
         throw `Invalid step ${step}`;

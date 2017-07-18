@@ -3,7 +3,6 @@ import {BasicInstruments} from "./audio/BasicInstruments";
 import {Chord} from "./audio/Chord";
 import {Scale} from "./audio/Scale";
 import {Note} from "./audio/Note";
-import {Pitch} from "./audio/Pitch";
 
 export default class App extends React.Component<any, any> {
 
@@ -55,6 +54,16 @@ export default class App extends React.Component<any, any> {
         return buttons;
     }
 
+    /*
+     <tr>{this.diatonicChords(Scale.Lydian)}</tr>
+     <tr>{this.diatonicChords(Scale.Ionian)}</tr>
+     <tr>{this.diatonicChords(Scale.Mixolydian)}</tr>
+     <tr>{this.diatonicChords(Scale.Dorian)}</tr>
+     <tr>{this.diatonicChords(Scale.Aeolian)}</tr>
+     <tr>{this.diatonicChords(Scale.Phrygian)}</tr>
+     <tr>{this.diatonicChords(Scale.Locrian)}</tr>
+     */
+
     render() {
         return (
             <div>
@@ -81,17 +90,17 @@ export default class App extends React.Component<any, any> {
                 <table>
                     <thead>
                         <tr>
-                            <th colSpan={9}>Diatonic Chord Table</th>
+                            <th colSpan={9}>Modal Diatonic Chord Table</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>{this.diatonicChords(Scale.Lydian)}</tr>
-                        <tr>{this.diatonicChords(Scale.Ionian)}</tr>
-                        <tr>{this.diatonicChords(Scale.Mixolydian)}</tr>
-                        <tr>{this.diatonicChords(Scale.Dorian)}</tr>
-                        <tr>{this.diatonicChords(Scale.Aeolian)}</tr>
-                        <tr>{this.diatonicChords(Scale.Phrygian)}</tr>
-                        <tr>{this.diatonicChords(Scale.Locrian)}</tr>
+                    <tr>{this.diatonicChords(Scale.Lydian)}</tr>
+                    <tr>{this.diatonicChords(Scale.Ionian)}</tr>
+                    <tr>{this.diatonicChords(Scale.Mixolydian)}</tr>
+                    <tr>{this.diatonicChords(Scale.Dorian)}</tr>
+                    <tr>{this.diatonicChords(Scale.Aeolian)}</tr>
+                    <tr>{this.diatonicChords(Scale.Phrygian)}</tr>
+                    <tr>{this.diatonicChords(Scale.Locrian)}</tr>
                     </tbody>
                 </table>
             </div>

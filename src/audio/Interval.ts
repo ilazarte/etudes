@@ -72,6 +72,17 @@ class Interval {
         }
         throw `Invalid step '${step}' and quality '${quality.toString()}' combination.`
     }
+
+    static toQuality(step: number, semitone: number) {
+        for (let i = 0; i < INTERVAL_SEMITONE_LUT.length; i++) {
+            let interval = INTERVAL_SEMITONE_LUT[i];
+            if (interval.step === step &&
+                interval.semitone === semitone) {
+                return interval.quality;
+            }
+        }
+        throw `Invalid step '${step}' and semitone '${semitone}' combination.`
+    }
 }
 
 export {Interval};

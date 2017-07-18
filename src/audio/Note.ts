@@ -1,7 +1,7 @@
 import {Pitch} from "./Pitch";
 import {Accidental} from "./Accidental";
 
-const sequence = ["C", "C#", "D","D#","E", "F","F#","G","G#","A","A#","B"];
+const sequence = ["C", "C#|Db", "D","D#|Eb","E", "F","F#|Gb","G","G#|Ab","A","A#|Bb","B"];
 
 class Note {
     pitch: Pitch;
@@ -38,6 +38,33 @@ class Note {
     }
 
     /**
+     * Find the sequence key in the sequence, considering a start idx if sent.
+     * @param seq
+     * @param sequenceKey
+     * @param startIdx
+     * @returns {number}
+     * @private
+     */
+    _sequenceIndexOf(seq: string[], sequenceKey: string, startIdx = 0) {
+        for (let i = 0; i < seq.length; i++) {
+            if (i < startIdx) {
+                continue;
+            }
+            let item = seq[i];
+            if (sequenceKey === item) {
+                return i;
+            }
+            if (item.indexOf("|") !== -1) {
+                let [flat, sharp] = item.split("|");
+                if (sequenceKey === flat || sequenceKey === sharp) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Return a copy of the note.
      * @returns {Note}
      */
@@ -46,19 +73,13 @@ class Note {
     }
 
     /**
-     * Returns a new note.
-     * @param semitones
+     * Normalize a flat into a sharp note for easy lookup.
+     * @param note
      * @returns {Note}
      */
-    transpose(semitones: number) : Note {
+    normalizeFlat(note = this.copy()) {
 
-        let sign = semitones >= 0 ? 1 : -1,
-            octaves = sign * Math.floor(Math.abs(semitones) / 12),
-            adjust = semitones % 12,
-            note = new Note(this.pitch, this.octave, this.accidental);
-
-        /*normalize flats*/
-        if (Accidental.Flat === this.accidental) {
+        if (Accidental.Flat === note.accidental) {
             if (Pitch.C === note.pitch) {
                 note.pitch = Pitch.B;
                 note.octave--;
@@ -72,11 +93,65 @@ class Note {
             }
         }
 
+        return note;
+    }
+
+    /**
+     * Find the semitone distance.  This note, semitones to second note
+     *
+     * @param second
+     * @returns {number}
+     */
+    semitone(second: Note) {
+
+        let seq = [... sequence, ...sequence];
+
+
+        // let first = this.normalizeFlat();
+        let first = this.copy();
+
+        // second = second.normalizeFlat();
+
+        /*console.log("\t\tfirst norm:", first);
+        console.log("\t\tsecond norm:", second);*/
+
+        let firstSeq = first.toSequence();
+        let secondSeq = second.toSequence();
+
+        /*console.log("\t\tfirstSeq:", firstSeq);
+        console.log("\t\tsecondSeq:", secondSeq);*/
+
+        let firstIdx = this._sequenceIndexOf(seq, firstSeq),
+            secondIdx = this._sequenceIndexOf(seq, secondSeq, firstIdx + 1);
+
+        /*console.log("\t\t first, second idxs:", firstIdx, secondIdx);*/
+
+        return secondIdx - firstIdx;
+    }
+
+
+    /**
+     * Returns a new note.
+     *
+     * @param semitones number of semitones to transpose by
+     * @returns {Note} new note
+     */
+    transpose(semitones: number) : Note {
+
+        let sign = semitones >= 0 ? 1 : -1,
+            octaves = sign * Math.floor(Math.abs(semitones) / 12),
+            adjust = semitones % 12;
+
+        /* get rid of normalize flats */
+        let note = this.normalizeFlat();
+        // let note = this.copy();
+
+        /* transpose the octave */
         if (octaves !== 0) {
             note.octave = note.octave + octaves;
         }
 
-        let idx = sequence.indexOf(note.pitch.toString() + note.accidental.toEncoding()),
+        let idx = this._sequenceIndexOf(sequence, note.toSequence()),
             newidx = idx + adjust,
             newnote,
             newpitch,
@@ -108,6 +183,10 @@ class Note {
 
     toEncoding() {
         return this.pitch.toString() + this.accidental.toEncoding() + this.octave;
+    }
+
+    toSequence() {
+        return this.pitch.toString() + this.accidental.toEncoding();
     }
 }
 
