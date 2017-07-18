@@ -70,16 +70,14 @@ export class Scale {
             console.log("\tactualdist: ", actualdist);*/
 
             /**
-             * TODO something like transpose should be here.
+             * TODO relocate to note?.
              * Basically, make semitone distance fit, while correctly applying key.
              *
              */
             if (distance > actualdist) {
-                // note = note.transpose(1);
                 note.accidental = Accidental.Sharp;
             }
             if (distance < actualdist) {
-                // note = note.transpose(-1);
                 note.accidental = Accidental.Flat;
             }
 
